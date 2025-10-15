@@ -9,14 +9,15 @@ class NewsCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const NewsCard({Key? key, required this.article, required this.onTap})
-    : super(key: key);
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.only(bottom: 16),
-      elevation: 2,
+      elevation: 1, // Elevasi lebih subtil
       shadowColor: AppColors.cardShadow,
+      color: AppColors.surface, // Latar belakang kartu
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: onTap,
@@ -35,17 +36,20 @@ class NewsCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
                     height: 200,
-                    color: AppColors.divider,
-                    child: Center(child: CircularProgressIndicator()),
+                    color: AppColors.surfaceVariant, // Warna placeholder baru
+                    child: Center(
+                        child: CircularProgressIndicator(
+                      color: AppColors.primary,
+                    )),
                   ),
                   errorWidget: (context, url, error) => Container(
                     height: 200,
-                    color: AppColors.divider,
+                    color: AppColors.surfaceVariant, // Warna error baru
                     child: Center(
                       child: Icon(
                         Icons.image_not_supported,
                         size: 40,
-                        color: AppColors.textHint,
+                        color: AppColors.onSurfaceVariant, // Ikon error baru
                       ),
                     ),
                   ),
@@ -65,7 +69,7 @@ class NewsCard extends StatelessWidget {
                           child: Text(
                             article.source!.name!,
                             style: TextStyle(
-                              color: AppColors.primary,
+                              color: AppColors.primary, // Tetap pakai warna primer
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
@@ -78,7 +82,7 @@ class NewsCard extends StatelessWidget {
                         Text(
                           timeago.format(DateTime.parse(article.publishedAt!)),
                           style: TextStyle(
-                            color: AppColors.textSecondary,
+                            color: AppColors.onSurfaceVariant, // Teks sekunder baru
                             fontSize: 12,
                           ),
                         ),
@@ -93,7 +97,7 @@ class NewsCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: AppColors.onSurface, // Teks utama baru
                         height: 1.3,
                       ),
                       maxLines: 3,
@@ -107,7 +111,7 @@ class NewsCard extends StatelessWidget {
                     Text(
                       article.description!,
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: AppColors.onSurfaceVariant, // Teks sekunder baru
                         fontSize: 14,
                         height: 1.4,
                       ),

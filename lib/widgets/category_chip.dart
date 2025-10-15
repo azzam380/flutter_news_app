@@ -21,17 +21,22 @@ class CategoryChip extends StatelessWidget {
         label: Text(label),
         selected: isSelected,
         onSelected: (_) => onTap(),
-        backgroundColor: Colors.grey[100],
-        selectedColor: AppColors.primary.withOpacity(0.2),
-        checkmarkColor: AppColors.primary,
+        showCheckmark: false, // Style M3 biasanya tanpa centang
+        backgroundColor: Colors.transparent, // Latar transparan
+        selectedColor: AppColors.secondaryContainer, // Latar saat terpilih
         labelStyle: TextStyle(
-          color: isSelected ? AppColors.primary : AppColors.textSecondary,
+          color: isSelected
+              ? AppColors.onSecondaryContainer // Teks saat terpilih
+              : AppColors.onSurfaceVariant, // Teks saat tidak
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: isSelected ? AppColors.primary : Colors.transparent,
+            // Border hanya untuk yang tidak terpilih
+            color: isSelected
+                ? Colors.transparent
+                : AppColors.onSurfaceVariant.withOpacity(0.5),
           ),
         ),
       ),

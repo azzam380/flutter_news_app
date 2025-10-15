@@ -14,35 +14,43 @@ class NewsDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background, // Latar belakang M3
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             expandedHeight: 300,
             pinned: true,
+            backgroundColor: AppColors.surface, // Latar AppBar saat collapse
+            foregroundColor: AppColors.primary, // Warna ikon (back, actions)
+            surfaceTintColor: AppColors.primary.withOpacity(0.08),
+            scrolledUnderElevation: 1.0,
             flexibleSpace: FlexibleSpaceBar(
               background: article.urlToImage != null
                   ? CachedNetworkImage(
                       imageUrl: article.urlToImage!,
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Container(
-                        color: AppColors.divider,
-                        child: Center(child: CircularProgressIndicator()),
+                        color: AppColors.surfaceVariant, // Warna placeholder M3
+                        child: Center(
+                            child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        )),
                       ),
                       errorWidget: (context, url, error) => Container(
-                        color: AppColors.divider,
+                        color: AppColors.surfaceVariant, // Warna error M3
                         child: Icon(
                           Icons.image_not_supported,
                           size: 50,
-                          color: AppColors.textHint,
+                          color: AppColors.onSurfaceVariant, // Ikon error M3
                         ),
                       ),
                     )
                   : Container(
-                      color: AppColors.divider,
+                      color: AppColors.surfaceVariant, // Warna placeholder M3
                       child: Icon(
                         Icons.newspaper,
                         size: 50,
-                        color: AppColors.textHint,
+                        color: AppColors.onSurfaceVariant, // Ikon M3
                       ),
                     ),
             ),
@@ -52,6 +60,7 @@ class NewsDetailView extends StatelessWidget {
                 onPressed: () => _shareArticle(),
               ),
               PopupMenuButton<String>(
+                // Ikon diwarnai oleh 'foregroundColor' di SliverAppBar
                 onSelected: (value) {
                   switch (value) {
                     case 'copy_link':
@@ -67,7 +76,7 @@ class NewsDetailView extends StatelessWidget {
                     value: 'copy_link',
                     child: Row(
                       children: [
-                        Icon(Icons.copy),
+                        Icon(Icons.copy, color: AppColors.onSurfaceVariant),
                         SizedBox(width: 8),
                         Text('Copy Link'),
                       ],
@@ -77,7 +86,8 @@ class NewsDetailView extends StatelessWidget {
                     value: 'open_browser',
                     child: Row(
                       children: [
-                        Icon(Icons.open_in_browser),
+                        Icon(Icons.open_in_browser,
+                            color: AppColors.onSurfaceVariant),
                         SizedBox(width: 8),
                         Text('Open in Browser'),
                       ],
@@ -99,17 +109,17 @@ class NewsDetailView extends StatelessWidget {
                       if (article.source?.name != null) ...[
                         Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
+                            horizontal: 10,
+                            vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(4),
+                            color: AppColors.primaryContainer, // Latar tag M3
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             article.source!.name!,
                             style: TextStyle(
-                              color: AppColors.primary,
+                              color: AppColors.onPrimaryContainer, // Teks tag M3
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
@@ -121,7 +131,7 @@ class NewsDetailView extends StatelessWidget {
                         Text(
                           timeago.format(DateTime.parse(article.publishedAt!)),
                           style: TextStyle(
-                            color: AppColors.textSecondary,
+                            color: AppColors.onSurfaceVariant, // Teks sekunder M3
                             fontSize: 12,
                           ),
                         ),
@@ -137,7 +147,7 @@ class NewsDetailView extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: AppColors.onSurface, // Teks utama M3
                         height: 1.3,
                       ),
                     ),
@@ -150,7 +160,7 @@ class NewsDetailView extends StatelessWidget {
                       article.description!,
                       style: TextStyle(
                         fontSize: 16,
-                        color: AppColors.textSecondary,
+                        color: AppColors.onSurfaceVariant, // Teks sekunder M3
                         height: 1.5,
                       ),
                     ),
@@ -164,15 +174,16 @@ class NewsDetailView extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: AppColors.onSurface, // Teks utama M3
                       ),
                     ),
                     SizedBox(height: 8),
                     Text(
-                      article.content!,
+                      // Membersihkan "[+... chars]" yang sering ada di API
+                      article.content!.split(RegExp(r'\[\+\d+\s*chars\]')).first,
                       style: TextStyle(
                         fontSize: 16,
-                        color: AppColors.textPrimary,
+                        color: AppColors.onSurface, // Teks utama M3
                         height: 1.6,
                       ),
                     ),
@@ -186,14 +197,19 @@ class NewsDetailView extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: _openInBrowser,
                         style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary, // Tombol M3
+                          foregroundColor: AppColors.onPrimary,
                           padding: EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(16), // Radius M3
                           ),
                         ),
                         child: Text(
                           'Read Full Article',
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -225,6 +241,10 @@ class NewsDetailView extends StatelessWidget {
         'Success',
         'Link copied to clipboard',
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.onSurface.withOpacity(0.9), // Snackbar M3
+        colorText: AppColors.surface,
+        borderRadius: 8,
+        margin: EdgeInsets.all(16),
         duration: Duration(seconds: 2),
       );
     }
@@ -240,6 +260,10 @@ class NewsDetailView extends StatelessWidget {
           'Error',
           'Could not open the link',
           snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.error, // Snackbar Error M3
+          colorText: AppColors.onError,
+          borderRadius: 8,
+          margin: EdgeInsets.all(16),
         );
       }
     }
