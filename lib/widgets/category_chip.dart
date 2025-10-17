@@ -17,28 +17,31 @@ class CategoryChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(right: 8),
-      child: FilterChip(
+      child: RawChip( // Menggunakan RawChip untuk kontrol yang lebih baik
         label: Text(label),
+        onPressed: onTap,
         selected: isSelected,
-        onSelected: (_) => onTap(),
-        showCheckmark: false, // Style M3 biasanya tanpa centang
-        backgroundColor: Colors.transparent, // Latar transparan
-        selectedColor: AppColors.secondaryContainer, // Latar saat terpilih
+        showCheckmark: false,
+        
+        // Style yang lebih modern
+        selectedColor: AppColors.primaryContainer, // Latar saat terpilih
+        backgroundColor: AppColors.surfaceVariant, // Latar saat tidak terpilih
+        
         labelStyle: TextStyle(
           color: isSelected
-              ? AppColors.onSecondaryContainer // Teks saat terpilih
+              ? AppColors.onPrimaryContainer // Teks saat terpilih
               : AppColors.onSurfaceVariant, // Teks saat tidak
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          fontSize: 14,
         ),
+        
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(
-            // Border hanya untuk yang tidak terpilih
-            color: isSelected
-                ? Colors.transparent
-                : AppColors.onSurfaceVariant.withOpacity(0.5),
-          ),
+          borderRadius: BorderRadius.circular(10), // Radius lebih kecil
+          side: BorderSide.none, // Tanpa border
         ),
+        elevation: isSelected ? 2 : 0, // Efek elevasi saat terpilih
+        shadowColor: AppColors.primaryBlue.withOpacity(0.2),
       ),
     );
   }

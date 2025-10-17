@@ -11,87 +11,123 @@ class HomeView extends GetView<NewsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background, // Latar belakang utama
-      appBar: AppBar(
-        title: Text(
-          'SENGKUNI NEWS',
-          style: TextStyle(
-            color: AppColors.onSurface, // Teks AppBar
-            fontWeight: FontWeight.bold,
-          ),
+      body: Container(
+        decoration: BoxDecoration(
+          color: AppColors.background,
+          // Menggunakan gradient untuk latar belakang
+          gradient: AppColors.blueGradient,
         ),
-        centerTitle: true,
-        backgroundColor: AppColors.surface, // Latar AppBar
-        elevation: 0,
-        scrolledUnderElevation: 1.0, // Efek shadow saat scroll
-        surfaceTintColor: AppColors.primary.withOpacity(0.08),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search, color: AppColors.onSurface), // Ikon AppBar
-            onPressed: () => _showSearchDialog(context),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Categories
-          Container(
-            height: 60,
-            color: AppColors.surface, // Latar kategori
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: controller.categories.length,
-              itemBuilder: (context, index) {
-                final category = controller.categories[index];
-                return Obx(
-                  () => CategoryChip(
-                    label: category.capitalize ?? category,
-                    isSelected: controller.selectedCategory == category,
-                    onTap: () => controller.selectCategory(category),
+        child: Column(
+          children: [
+            // Custom AppBar
+            _buildCustomAppBar(context),
+            // Custom Categories dengan gradient ringan
+            _buildCategoryChips(),
+
+            // News List
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading) {
+                  return LoadingShimmer();
+                }
+
+                if (controller.error.isNotEmpty) {
+                  return _buildErrorWidget();
+                }
+
+                if (controller.articles.isEmpty) {
+                  return _buildEmptyWidget();
+                }
+
+                return RefreshIndicator(
+                  onRefresh: controller.refreshNews,
+                  color: AppColors.primary,
+                  child: ListView.builder(
+                    padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+                    itemCount: controller.articles.length,
+                    itemBuilder: (context, index) {
+                      final article = controller.articles[index];
+                      return NewsCard(
+                        article: article,
+                        onTap: () =>
+                            Get.toNamed(Routes.NEWS_DETAIL, arguments: article),
+                      );
+                    },
                   ),
                 );
-              },
+              }),
             ),
-          ),
-
-          // News List
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoading) {
-                return LoadingShimmer();
-              }
-
-              if (controller.error.isNotEmpty) {
-                return _buildErrorWidget();
-              }
-
-              if (controller.articles.isEmpty) {
-                return _buildEmptyWidget();
-              }
-
-              return RefreshIndicator(
-                onRefresh: controller.refreshNews,
-                color: AppColors.primary, // Warna indikator refresh
-                child: ListView.builder(
-                  padding: EdgeInsets.all(16),
-                  itemCount: controller.articles.length,
-                  itemBuilder: (context, index) {
-                    final article = controller.articles[index];
-                    return NewsCard(
-                      article: article,
-                      onTap: () =>
-                          Get.toNamed(Routes.NEWS_DETAIL, arguments: article),
-                    );
-                  },
-                ),
-              );
-            }),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+
+  // --- Widgets Bagian Atas ---
+
+  Widget _buildCustomAppBar(BuildContext context) {
+    // AppBar menggunakan warna putih (surface) agar judul kontras.
+    return Container(
+      color: AppColors.onSecondaryContainer, // Latar belakang putih
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 8, bottom: 8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'BluePrint News',
+              style: TextStyle(
+                color: AppColors.surface, // Judul menggunakan warna Primary Blue
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0.5,
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.search, size: 28, color: AppColors.surface),
+              onPressed: () => _showSearchDialog(context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryChips() {
+    // Menggunakan Container dengan BoxDecoration agar bisa memakai Gradient/Shadow
+    return Container(
+      height: 65, // Sedikit lebih tinggi
+      decoration: BoxDecoration(
+        color: AppColors.surface, // Warna latar belakang default
+        // Tambahkan BoxShadow untuk efek pemisah yang lembut
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.05),
+            blurRadius: 4,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        itemCount: controller.categories.length,
+        itemBuilder: (context, index) {
+          final category = controller.categories[index];
+          return Obx(
+            () => CategoryChip(
+              label: category.capitalize ?? category,
+              isSelected: controller.selectedCategory == category,
+              onTap: () => controller.selectCategory(category),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // --- Status Widgets (Tidak Berubah) ---
 
   Widget _buildErrorWidget() {
     return Center(
@@ -103,26 +139,29 @@ class HomeView extends GetView<NewsController> {
             Icon(Icons.error_outline, size: 64, color: AppColors.error),
             SizedBox(height: 16),
             Text(
-              'Something went wrong',
+              'Oops! Gagal Memuat Berita',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppColors.onBackground, // Teks utama
+                color: AppColors.onBackground,
               ),
             ),
             SizedBox(height: 8),
             Text(
-              'Please check your internet connection',
-              style: TextStyle(color: AppColors.onSurfaceVariant), // Teks sekunder
+              'Silakan cek koneksi internet Anda atau coba lagi.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.onSurfaceVariant),
             ),
             SizedBox(height: 24),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary, // Tombol M3
+                backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.onPrimary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
               ),
               onPressed: controller.refreshNews,
-              child: Text('Retry'),
+              child: Text('Coba Lagi', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -137,26 +176,29 @@ class HomeView extends GetView<NewsController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.newspaper, size: 64, color: AppColors.onSurfaceVariant), // Ikon M3
+            Icon(Icons.newspaper, size: 64, color: AppColors.onSurfaceVariant),
             SizedBox(height: 16),
             Text(
-              'No news available',
+              'Tidak Ada Berita Tersedia',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppColors.onBackground, // Teks utama
+                color: AppColors.onBackground,
               ),
             ),
             SizedBox(height: 8),
             Text(
-              'Please try again later',
-              style: TextStyle(color: AppColors.onSurfaceVariant), // Teks sekunder
+              'Tidak ditemukan berita untuk kategori ini. Coba kategori lain.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.onSurfaceVariant),
             ),
           ],
         ),
       ),
     );
   }
+
+  // --- Search Dialog (Tidak Berubah) ---
 
   void _showSearchDialog(BuildContext context) {
     final TextEditingController searchController = TextEditingController();
@@ -165,24 +207,29 @@ class HomeView extends GetView<NewsController> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28), // Radius dialog M3
+          borderRadius: BorderRadius.circular(20),
         ),
-        backgroundColor: AppColors.surface, // Latar dialog
-        title: Text('Search News'),
+        backgroundColor: AppColors.surface,
+        title: Text(
+          'Cari Berita',
+          style: TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.bold),
+        ),
         content: TextField(
           controller: searchController,
           decoration: InputDecoration(
-            hintText: 'Enter search term...',
+            hintText: 'Masukkan kata kunci...',
+            hintStyle: TextStyle(color: AppColors.textHint),
             filled: true,
-            fillColor: AppColors.surfaceVariant, // Latar field
+            fillColor: AppColors.surfaceVariant,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide.none, // Tanpa border
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: AppColors.primary), // Border saat fokus
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: AppColors.primary, width: 2),
             ),
+            prefixIcon: Icon(Icons.search, color: AppColors.primary),
           ),
           onSubmitted: (value) {
             if (value.isNotEmpty) {
@@ -194,12 +241,13 @@ class HomeView extends GetView<NewsController> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel', style: TextStyle(color: AppColors.primary)),
+            child: Text('Batal', style: TextStyle(color: AppColors.primary)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.onPrimary,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: () {
               if (searchController.text.isNotEmpty) {
@@ -207,7 +255,7 @@ class HomeView extends GetView<NewsController> {
                 Navigator.of(context).pop();
               }
             },
-            child: Text('Search'),
+            child: Text('Cari'),
           ),
         ],
       ),

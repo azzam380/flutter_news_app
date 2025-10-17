@@ -47,65 +47,72 @@ class _SplashViewState extends State<SplashView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: Center(
-        child: AnimatedBuilder(
-          animation: _animationController,
-          builder: (context, child) {
-            return FadeTransition(
-              opacity: _fadeAnimation,
-              child: ScaleTransition(
-                scale: _scaleAnimation,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 20,
-                            offset: Offset(0, 10),
-                          ),
-                        ],
+      // Menggunakan Container dengan Gradient sebagai background
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryGradient, // Gradient biru
+        ),
+        child: Center(
+          child: AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, child) {
+              return FadeTransition(
+                opacity: _fadeAnimation,
+                child: ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Logo Box yang lebih modern
+                      Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30), // Radius lebih besar
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 25, // Blur lebih lembut
+                              offset: Offset(0, 15),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.newspaper,
+                          size: 60,
+                          color: AppColors.primary,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.newspaper,
-                        size: 60,
-                        color: AppColors.primary,
+                      SizedBox(height: 30),
+                      Text(
+                        'SENGKUNI NEWS', // Menggunakan nama aplikasi di sini
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 2, // Spasi lebih lebar
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 30),
-                    Text(
-                      'News App',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: 1.5,
+                      SizedBox(height: 10),
+                      Text(
+                        'The Truth, Unfiltered.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white.withOpacity(0.8),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Stay Updated with Latest News',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white.withOpacity(0.8),
+                      SizedBox(height: 50),
+                      CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        strokeWidth: 3, // Progress bar lebih ramping
                       ),
-                    ),
-                    SizedBox(height: 50),
-                    CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

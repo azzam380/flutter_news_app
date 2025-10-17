@@ -14,46 +14,63 @@ class NewsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.only(bottom: 16),
-      elevation: 1, // Elevasi lebih subtil
+      margin: EdgeInsets.only(bottom: 20), // Jarak antar kartu lebih besar
+      elevation: 4, // Elevasi yang lebih menonjol
       shadowColor: AppColors.cardShadow,
-      color: AppColors.surface, // Latar belakang kartu
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // Radius lebih besar
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image
             if (article.urlToImage != null)
-              ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                child: CachedNetworkImage(
-                  imageUrl: article.urlToImage!,
-                  height: 200,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    height: 200,
-                    color: AppColors.surfaceVariant, // Warna placeholder baru
-                    child: Center(
-                        child: CircularProgressIndicator(
-                      color: AppColors.primary,
-                    )),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    height: 200,
-                    color: AppColors.surfaceVariant, // Warna error baru
-                    child: Center(
-                      child: Icon(
-                        Icons.image_not_supported,
-                        size: 40,
-                        color: AppColors.onSurfaceVariant, // Ikon error baru
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                    child: CachedNetworkImage(
+                      imageUrl: article.urlToImage!,
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        height: 200,
+                        color: AppColors.surfaceVariant,
+                        child: Center(
+                            child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        )),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        height: 200,
+                        color: AppColors.surfaceVariant,
+                        child: Center(
+                          child: Icon(
+                            Icons.broken_image,
+                            size: 40,
+                            color: AppColors.onSurfaceVariant,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                  // Overlay untuk memberikan kontras pada teks jika diperlukan (opsional)
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                        gradient: LinearGradient(
+                          colors: [Colors.black.withOpacity(0.0), Colors.black.withOpacity(0.05)],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
 
             Padding(
@@ -69,8 +86,8 @@ class NewsCard extends StatelessWidget {
                           child: Text(
                             article.source!.name!,
                             style: TextStyle(
-                              color: AppColors.primary, // Tetap pakai warna primer
-                              fontSize: 12,
+                              color: AppColors.primary,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -82,7 +99,7 @@ class NewsCard extends StatelessWidget {
                         Text(
                           timeago.format(DateTime.parse(article.publishedAt!)),
                           style: TextStyle(
-                            color: AppColors.onSurfaceVariant, // Teks sekunder baru
+                            color: AppColors.onSurfaceVariant,
                             fontSize: 12,
                           ),
                         ),
@@ -95,9 +112,9 @@ class NewsCard extends StatelessWidget {
                     Text(
                       article.title!,
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.onSurface, // Teks utama baru
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.onSurface,
                         height: 1.3,
                       ),
                       maxLines: 3,
@@ -111,7 +128,7 @@ class NewsCard extends StatelessWidget {
                     Text(
                       article.description!,
                       style: TextStyle(
-                        color: AppColors.onSurfaceVariant, // Teks sekunder baru
+                        color: AppColors.onSurfaceVariant,
                         fontSize: 14,
                         height: 1.4,
                       ),
