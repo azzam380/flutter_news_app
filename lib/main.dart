@@ -21,22 +21,40 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'News App',
+
+      // --- Light Theme (Sesuai dengan desain Putih-Biru) ---
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        primaryColor: AppColors.primary,
+        brightness: Brightness.light,
         scaffoldBackgroundColor: AppColors.background,
+        colorScheme: const ColorScheme.light(
+          primary: AppColors.primary,
+          surface: AppColors.surface,
+          background: AppColors.background,
+          onSurface: AppColors.onSurface,
+          onBackground: AppColors.onBackground,
+          error: AppColors.error,
+        ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          backgroundColor: AppColors.surface, // AppBar Putih
+          foregroundColor: AppColors.onSurface, // Ikon/Teks Primary
           elevation: 0,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
+            foregroundColor: AppColors.onPrimary,
           ),
         ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: AppColors.onSurface),
+          bodyMedium: TextStyle(color: AppColors.onSurface),
+          titleMedium: TextStyle(color: AppColors.onSurfaceVariant),
+        ),
       ),
+      
+      // darkTheme: Dihilangkan untuk menstabilkan aplikasi
+      // themeMode: Dihilangkan
+
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
       initialBinding: AppBindings(),

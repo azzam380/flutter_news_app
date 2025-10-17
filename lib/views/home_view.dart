@@ -10,21 +10,23 @@ import 'package:news_app/widgets/loading_shimmer.dart';
 class HomeView extends GetView<NewsController> {
   @override
   Widget build(BuildContext context) {
+    // Menghilangkan Obx terluar untuk menstabilkan GetX error
     return Scaffold(
+      backgroundColor: AppColors.background, // Set background di Scaffold
       body: Container(
         decoration: BoxDecoration(
-          color: AppColors.background,
-          // Menggunakan gradient untuk latar belakang
-          gradient: AppColors.blueGradient,
+          // Gunakan gradient secara statis karena Obx dihilangkan
+          gradient: AppColors.blueGradient, 
         ),
         child: Column(
           children: [
-            // Custom AppBar
+            // Custom AppBar dengan Logo (tidak lagi dibungkus Obx)
             _buildCustomAppBar(context),
-            // Custom Categories dengan gradient ringan
+            
+            // Categories (tidak lagi dibungkus Obx, hanya CategoryChip yang reaktif)
             _buildCategoryChips(),
 
-            // News List
+            // News List (Tetap dibungkus Obx untuk data loading/articles)
             Expanded(
               child: Obx(() {
                 if (controller.isLoading) {
@@ -63,30 +65,57 @@ class HomeView extends GetView<NewsController> {
     );
   }
 
-  // --- Widgets Bagian Atas ---
+  // --- Widgets Bagian Atas: NAV BAR MINIMALIS DENGAN LOGO BARU ---
 
   Widget _buildCustomAppBar(BuildContext context) {
-    // AppBar menggunakan warna putih (surface) agar judul kontras.
+    // Karena Obx dihilangkan, kita gunakan warna tema Light Mode yang sudah stabil
+    const Color iconColor = AppColors.onSurface;
+    const Color bgColor = AppColors.primaryBlue;
+
     return Container(
-      color: AppColors.onSecondaryContainer, // Latar belakang putih
+      color: bgColor,
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 8, bottom: 8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'BluePrint News',
-              style: TextStyle(
-                color: AppColors.surface, // Judul menggunakan warna Primary Blue
-                fontSize: 22,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 0.5,
-              ),
+            // KIRI: LOGO BARU (ICON & JUDUL)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.public, // Ikon dunia sebagai logo yang bagus
+                  size: 28,
+                  color: AppColors.surface, // Warna biru cerah
+                ),
+                SizedBox(width: 8),
+                Text(
+                  'BLUEPRINT NEWS',
+                  style: TextStyle(
+                    color: AppColors.onSurface,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
             ),
-            IconButton(
-              icon: Icon(Icons.search, size: 28, color: AppColors.surface),
-              onPressed: () => _showSearchDialog(context),
+            
+            // KANAN: Ikon Profile dan Search
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.person_outline, size: 28, color: iconColor),
+                  onPressed: () {
+                    Get.snackbar('Login/Register', 'Navigasi ke halaman autentikasi.');
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.search, size: 28, color: iconColor),
+                  onPressed: () => _showSearchDialog(context),
+                ),
+              ],
             ),
           ],
         ),
@@ -95,12 +124,13 @@ class HomeView extends GetView<NewsController> {
   }
 
   Widget _buildCategoryChips() {
-    // Menggunakan Container dengan BoxDecoration agar bisa memakai Gradient/Shadow
+    // Karena Obx dihilangkan, kita gunakan warna tema Light Mode yang sudah stabil
+    const Color bgColor = AppColors.surface;
+
     return Container(
-      height: 65, // Sedikit lebih tinggi
+      height: 65,
       decoration: BoxDecoration(
-        color: AppColors.surface, // Warna latar belakang default
-        // Tambahkan BoxShadow untuk efek pemisah yang lembut
+        color: bgColor,
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withOpacity(0.05),
@@ -115,6 +145,7 @@ class HomeView extends GetView<NewsController> {
         itemCount: controller.categories.length,
         itemBuilder: (context, index) {
           final category = controller.categories[index];
+          // CategoryChip harus tetap di-wrap Obx karena controller.selectedCategory adalah observable
           return Obx(
             () => CategoryChip(
               label: category.capitalize ?? category,
@@ -127,9 +158,12 @@ class HomeView extends GetView<NewsController> {
     );
   }
 
-  // --- Status Widgets (Tidak Berubah) ---
-
+  // --- Status Widgets & Search Dialog (Hanya menggunakan Get.isDarkMode jika diperlukan) ---
+  
   Widget _buildErrorWidget() {
+    // Karena Obx dihilangkan, kita asumsikan Light Mode, atau gunakan Theme.of(context)
+    final textColor = Theme.of(Get.context!).textTheme.bodyLarge?.color;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -143,7 +177,7 @@ class HomeView extends GetView<NewsController> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppColors.onBackground,
+                color: textColor,
               ),
             ),
             SizedBox(height: 8),
@@ -154,12 +188,6 @@ class HomeView extends GetView<NewsController> {
             ),
             SizedBox(height: 24),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.onPrimary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-              ),
               onPressed: controller.refreshNews,
               child: Text('Coba Lagi', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
@@ -170,6 +198,8 @@ class HomeView extends GetView<NewsController> {
   }
 
   Widget _buildEmptyWidget() {
+    final textColor = Theme.of(Get.context!).textTheme.bodyLarge?.color;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -183,7 +213,7 @@ class HomeView extends GetView<NewsController> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppColors.onBackground,
+                color: textColor,
               ),
             ),
             SizedBox(height: 8),
@@ -198,10 +228,11 @@ class HomeView extends GetView<NewsController> {
     );
   }
 
-  // --- Search Dialog (Tidak Berubah) ---
-
   void _showSearchDialog(BuildContext context) {
     final TextEditingController searchController = TextEditingController();
+    const Color dialogBg = AppColors.surface;
+    const Color fieldBg = AppColors.surfaceVariant;
+    const Color primaryColor = AppColors.primary;
 
     showDialog(
       context: context,
@@ -209,27 +240,28 @@ class HomeView extends GetView<NewsController> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        backgroundColor: AppColors.surface,
-        title: Text(
+        backgroundColor: dialogBg,
+        title: const Text(
           'Cari Berita',
           style: TextStyle(color: AppColors.onSurface, fontWeight: FontWeight.bold),
         ),
         content: TextField(
           controller: searchController,
+          style: const TextStyle(color: AppColors.onSurface),
           decoration: InputDecoration(
             hintText: 'Masukkan kata kunci...',
-            hintStyle: TextStyle(color: AppColors.textHint),
+            hintStyle: const TextStyle(color: AppColors.textHint),
             filled: true,
-            fillColor: AppColors.surfaceVariant,
+            fillColor: fieldBg,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: AppColors.primary, width: 2),
+              borderSide: const BorderSide(color: primaryColor, width: 2),
             ),
-            prefixIcon: Icon(Icons.search, color: AppColors.primary),
+            prefixIcon: const Icon(Icons.search, color: primaryColor),
           ),
           onSubmitted: (value) {
             if (value.isNotEmpty) {
@@ -241,11 +273,11 @@ class HomeView extends GetView<NewsController> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Batal', style: TextStyle(color: AppColors.primary)),
+            child: const Text('Batal', style: TextStyle(color: primaryColor)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: primaryColor,
               foregroundColor: AppColors.onPrimary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
@@ -255,7 +287,7 @@ class HomeView extends GetView<NewsController> {
                 Navigator.of(context).pop();
               }
             },
-            child: Text('Cari'),
+            child: const Text('Cari'),
           ),
         ],
       ),
