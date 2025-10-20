@@ -6,13 +6,37 @@ import 'package:news_app/utils/constants.dart';
 class NewsController extends GetxController {
   final NewsService _newsService = NewsService();
 
-  // Observable variables
+  // --- OBSERVABLE STATE UNTUK OTENTIKASI ---
+  final _isLoggedIn = false.obs;
+  final _username = 'Guest'.obs;
+  
+  bool get isLoggedIn => _isLoggedIn.value;
+  String get username => _username.value;
+
+  // --- METHODS OTENTIKASI BARU ---
+  void loginUser(String user) {
+    _username.value = user;
+    _isLoggedIn.value = true;
+  }
+
+  void logoutUser() {
+    _username.value = 'Guest';
+    _isLoggedIn.value = false;
+    Get.snackbar('Logout', 'You have successfully logged out.', snackPosition: SnackPosition.BOTTOM);
+  }
+
+  void updateUsername(String newUsername) {
+    _username.value = newUsername;
+    Get.snackbar('Success', 'Username updated successfully!', snackPosition: SnackPosition.BOTTOM);
+  }
+
+  // --- VARIABLES NEWS LAMA ---
   final _isLoading = false.obs;
   final _articles = <NewsArticle>[].obs;
   final _selectedCategory = 'general'.obs;
   final _error = ''.obs;
 
-  // Getters
+  // Getters News
   bool get isLoading => _isLoading.value;
   List<NewsArticle> get articles => _articles;
   String get selectedCategory => _selectedCategory.value;
@@ -25,6 +49,7 @@ class NewsController extends GetxController {
     fetchTopHeadlines();
   }
 
+  // ... (Sisa fungsi fetchTopHeadlines, refreshNews, selectCategory, searchNews tidak berubah)
   Future<void> fetchTopHeadlines({String? category}) async {
     try {
       _isLoading.value = true;

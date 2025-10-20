@@ -8,40 +8,43 @@ import 'package:news_app/widgets/category_chip.dart';
 import 'package:news_app/widgets/loading_shimmer.dart';
 
 class HomeView extends GetView<NewsController> {
+  // GlobalKey digunakan untuk mengakses Drawer State
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   
   @override
   Widget build(BuildContext context) {
+    // Scaffold tidak dibungkus Obx untuk menghindari error GetX level tinggi
     return Scaffold(
-      key: _scaffoldKey,
+      key: _scaffoldKey, // Kunci untuk membuka drawer
       backgroundColor: AppColors.background,
-      drawer: _buildAppDrawer(), // Main Menu Drawer
+      drawer: _buildAppDrawer(), // Widget Drawer untuk menu samping
       
       body: Container(
         decoration: const BoxDecoration(
+          // Gradient statis untuk tema putih-biru
           gradient: AppColors.blueGradient, 
         ),
         child: Column(
           children: [
-            // Custom AppBar with Logo
+            // AppBar (Navbar)
             _buildCustomAppBar(context),
             
-            // Categories
+            // Category Chips (Horizontal List)
             _buildCategoryChips(),
 
-            // News List
+            // News List Area
             Expanded(
-              child: Obx(() {
+              child: Obx(() { // Obx untuk data Controller (loading/articles)
                 if (controller.isLoading) {
                   return LoadingShimmer();
                 }
 
                 if (controller.error.isNotEmpty) {
-                  return _buildErrorWidget();
+                  return _buildErrorWidget(context); // Melewatkan context
                 }
 
                 if (controller.articles.isEmpty) {
-                  return _buildEmptyWidget();
+                  return _buildEmptyWidget(context); // Melewatkan context
                 }
 
                 return RefreshIndicator(
@@ -68,7 +71,7 @@ class HomeView extends GetView<NewsController> {
     );
   }
 
-  // --- DRAWER WIDGET (SIDE MENU) ---
+  // --- WIDGET DRAWER (MENU Samping) ---
 
   Widget _buildAppDrawer() {
     return Drawer(
@@ -76,7 +79,7 @@ class HomeView extends GetView<NewsController> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          // Custom Header
+          // Header Kustom
           Container(
             padding: EdgeInsets.only(top: MediaQuery.of(Get.context!).padding.top + 16, bottom: 16, left: 16, right: 16),
             decoration: const BoxDecoration(
@@ -86,7 +89,7 @@ class HomeView extends GetView<NewsController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GestureDetector(
-                  onTap: () => Get.back(),
+                  onTap: () => Get.back(), // Tutup drawer
                   child: const Icon(Icons.close, color: Colors.white, size: 28),
                 ),
                 const SizedBox(height: 16),
@@ -184,9 +187,10 @@ class HomeView extends GetView<NewsController> {
     );
   }
 
-  // --- TOP NAV BAR WIDGETS (SEARCH ICON RESTORED) ---
+  // --- TOP NAV BAR WIDGETS ---
 
   Widget _buildCustomAppBar(BuildContext context) {
+    // Warna untuk Navbar Biru Gelap
     const Color iconColor = AppColors.onPrimary;
     const Color textColor = AppColors.onPrimary;
     const Color bgColor = AppColors.primaryBlue;
@@ -205,7 +209,7 @@ class HomeView extends GetView<NewsController> {
                 IconButton(
                   icon: const Icon(Icons.menu, size: 28, color: AppColors.surface),
                   onPressed: () {
-                    _scaffoldKey.currentState?.openDrawer(); // Open Drawer
+                    _scaffoldKey.currentState?.openDrawer(); // Buka Drawer
                   },
                 ),
                 const SizedBox(width: 8),
@@ -227,22 +231,32 @@ class HomeView extends GetView<NewsController> {
               ],
             ),
             
-            // KANAN: Notification, Profile, and SEARCH Icons
+            // KANAN: Ikon Notifikasi, Profile, dan Search
             Row(
               children: [
+                // 1. Ikon Notifikasi (Menuju NotificationView)
                 IconButton(
                   icon: const Icon(Icons.notifications_none, size: 28, color: iconColor),
                   onPressed: () {
-                    Get.snackbar('Notification', 'Open your notifications page.');
+                    Get.toNamed(Routes.NOTIFICATION); // Navigasi ke Halaman Notifikasi
                   },
                 ),
-                IconButton(
-                  icon: const Icon(Icons.person_outline, size: 28, color: iconColor),
+                // 2. Ikon Profil/Login (Navigasi Kondisional)
+                Obx(() => IconButton(
+                  icon: Icon(
+                    controller.isLoggedIn ? Icons.person : Icons.person_outline, 
+                    size: 28, 
+                    color: iconColor
+                  ),
                   onPressed: () {
-                    Get.snackbar('Login/Register', 'Navigate to authentication page.');
+                    if (controller.isLoggedIn) {
+                      Get.toNamed(Routes.ACCOUNT_CENTER); // Jika sudah login, ke Pusat Akun
+                    } else {
+                      Get.toNamed(Routes.AUTH); // Jika belum, ke Halaman Login/Register
+                    }
                   },
-                ),
-                // IKON SEARCH YANG HILANG DIKEMBALIKAN
+                )),
+                // 3. Ikon Search
                 IconButton(
                   icon: const Icon(Icons.search, size: 28, color: iconColor),
                   onPressed: () => _showSearchDialog(context),
@@ -290,8 +304,9 @@ class HomeView extends GetView<NewsController> {
 
   // --- Status Widgets & Search Dialog ---
   
-  Widget _buildErrorWidget() {
-    final textColor = Theme.of(Get.context!).textTheme.bodyLarge?.color;
+  // Menerima BuildContext sebagai parameter untuk Theme.of()
+  Widget _buildErrorWidget(BuildContext context) {
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color;
 
     return Center(
       child: Padding(
@@ -326,8 +341,9 @@ class HomeView extends GetView<NewsController> {
     );
   }
 
-  Widget _buildEmptyWidget() {
-    final textColor = Theme.of(Get.context!).textTheme.bodyLarge?.color;
+  // Menerima BuildContext sebagai parameter untuk Theme.of()
+  Widget _buildEmptyWidget(BuildContext context) {
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color;
 
     return Center(
       child: Padding(
