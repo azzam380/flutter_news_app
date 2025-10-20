@@ -10,15 +10,15 @@ class SplashView extends StatefulWidget {
 
 class _SplashViewState extends State<SplashView>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
+  late final AnimationController _animationController;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
       vsync: this,
     );
 
@@ -33,7 +33,7 @@ class _SplashViewState extends State<SplashView>
     _animationController.forward();
 
     // Navigate to home after 3 seconds
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Get.offAllNamed(Routes.HOME);
     });
   }
@@ -47,10 +47,10 @@ class _SplashViewState extends State<SplashView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Menggunakan Container dengan Gradient sebagai background
+      // Background dengan Gradient Biru
       body: Container(
-        decoration: BoxDecoration(
-          gradient: AppColors.primaryGradient, // Gradient biru
+        decoration: const BoxDecoration(
+          gradient: AppColors.primaryGradient,
         ),
         child: Center(
           child: AnimatedBuilder(
@@ -63,49 +63,63 @@ class _SplashViewState extends State<SplashView>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Logo Box yang lebih modern
+                      // --- Logo Box Modern ---
                       Container(
-                        width: 120,
-                        height: 120,
+                        width: 110, // Sedikit lebih kecil
+                        height: 110,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(30), // Radius lebih besar
+                          borderRadius: BorderRadius.circular(20), // Radius lebih tajam
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
-                              blurRadius: 25, // Blur lebih lembut
-                              offset: Offset(0, 15),
+                              color: Colors.black.withOpacity(0.25),
+                              blurRadius: 30, // Efek shadow yang dalam
+                              offset: const Offset(0, 10),
                             ),
                           ],
                         ),
-                        child: Icon(
-                          Icons.newspaper,
+                        child: const Icon(
+                          Icons.bolt, // Ikon baru: Melambangkan Kecepatan Berita
                           size: 60,
                           color: AppColors.primary,
                         ),
                       ),
-                      SizedBox(height: 30),
-                      Text(
-                        'SENGKUNI NEWS', // Menggunakan nama aplikasi di sini
+                      const SizedBox(height: 30),
+
+                      // --- Judul Utama ---
+                      const Text(
+                        'BLUEPRINT NEWS',
                         style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 34, // Lebih besar
+                          fontWeight: FontWeight.w900,
                           color: Colors.white,
-                          letterSpacing: 2, // Spasi lebih lebar
+                          letterSpacing: 2.5, // Spasi lebih lebar
+                          shadows: [
+                            Shadow(
+                              blurRadius: 6.0,
+                              color: Colors.black38,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
+
+                      // --- Subtitle ---
                       Text(
                         'The Truth, Unfiltered.',
                         style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 18,
+                          color: Colors.white.withOpacity(0.9),
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
-                      SizedBox(height: 50),
-                      CircularProgressIndicator(
+                      const SizedBox(height: 60),
+
+                      // --- Loading Indicator ---
+                      const CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        strokeWidth: 3, // Progress bar lebih ramping
+                        strokeWidth: 3.5,
                       ),
                     ],
                   ),
