@@ -4,6 +4,8 @@ part of 'app_pages.dart';
 
 // Part of 'app_pages.dart'
 
+// Part of 'app_pages.dart'
+
 abstract class Routes {
   Routes._();
   static const SPLASH = _Paths.SPLASH;
@@ -11,7 +13,8 @@ abstract class Routes {
   static const NEWS_DETAIL = _Paths.NEWS_DETAIL;
   static const NOTIFICATION = _Paths.NOTIFICATION;
   static const AUTH = _Paths.AUTH; 
-  static const ACCOUNT_CENTER = _Paths.ACCOUNT_CENTER; // BARU DITAMBAHKAN
+  static const ACCOUNT_CENTER = _Paths.ACCOUNT_CENTER; 
+  static const SEARCH = _Paths.SEARCH; // BARU DITAMBAHKAN
 }
 
 abstract class _Paths {
@@ -21,5 +24,6 @@ abstract class _Paths {
   static const NEWS_DETAIL = '/news-detail';
   static const NOTIFICATION = '/notification';
   static const AUTH = '/auth';
-  static const ACCOUNT_CENTER = '/account-center'; // BARU DITAMBAHKAN
+  static const ACCOUNT_CENTER = '/account-center'; 
+  static const SEARCH = '/search'; // BARU DITAMBAHKAN
 }

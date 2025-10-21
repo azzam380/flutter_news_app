@@ -13,7 +13,13 @@ class HomeView extends GetView<NewsController> {
   
   @override
   Widget build(BuildContext context) {
-    // Scaffold tidak dibungkus Obx untuk menghindari error GetX level tinggi
+    // KOREKSI UTAMA: Panggil fetch saat build jika data kosong (untuk mengatasi error kembali dari halaman lain)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (controller.articles.isEmpty && !controller.isLoading && controller.error.isEmpty) {
+        controller.fetchTopHeadlines();
+      }
+    });
+
     return Scaffold(
       key: _scaffoldKey, // Kunci untuk membuka drawer
       backgroundColor: AppColors.background,
@@ -21,7 +27,6 @@ class HomeView extends GetView<NewsController> {
       
       body: Container(
         decoration: const BoxDecoration(
-          // Gradient statis untuk tema putih-biru
           gradient: AppColors.blueGradient, 
         ),
         child: Column(
@@ -44,7 +49,9 @@ class HomeView extends GetView<NewsController> {
                 }
 
                 if (controller.articles.isEmpty) {
-                  return _buildEmptyWidget(context); // Melewatkan context
+                  // Jika articles kosong, kita sudah memicu fetch di atas.
+                  // Tampilkan pesan kosong.
+                  return _buildEmptyWidget(context); 
                 }
 
                 return RefreshIndicator(
@@ -259,7 +266,9 @@ class HomeView extends GetView<NewsController> {
                 // 3. Ikon Search
                 IconButton(
                   icon: const Icon(Icons.search, size: 28, color: iconColor),
-                  onPressed: () => _showSearchDialog(context),
+                  onPressed: () {
+                    Get.toNamed(Routes.SEARCH); // Navigasi ke Halaman Search View
+                  },
                 ),
               ],
             ),

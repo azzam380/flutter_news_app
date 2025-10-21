@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'News App',
+      title: 'BLUEPRINT NEWS',
 
       // --- Light Theme (Sesuai dengan desain Putih-Biru) ---
       theme: ThemeData(
@@ -51,9 +51,7 @@ class MyApp extends StatelessWidget {
           titleMedium: TextStyle(color: AppColors.onSurfaceVariant),
         ),
       ),
-      
-      // darkTheme: Dihilangkan untuk menstabilkan aplikasi
-      // themeMode: Dihilangkan
+    
 
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,

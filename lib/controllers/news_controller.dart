@@ -1,3 +1,5 @@
+// lib/controllers/news_controller.dart
+
 import 'package:get/get.dart';
 import 'package:news_app/models/news_article.dart';
 import 'package:news_app/services/news_service.dart';
@@ -22,7 +24,7 @@ class NewsController extends GetxController {
   void logoutUser() {
     _username.value = 'Guest';
     _isLoggedIn.value = false;
-    Get.snackbar('Logout', 'You have successfully logged out.', snackPosition: SnackPosition.BOTTOM);
+    Get.snackbar('Success', 'Logout successful!', snackPosition: SnackPosition.BOTTOM);
   }
 
   void updateUsername(String newUsername) {
@@ -48,8 +50,46 @@ class NewsController extends GetxController {
     super.onInit();
     fetchTopHeadlines();
   }
+  
+  // --- FUNGSI PENCARIAN BARU ---
+  
+  // Fungsi utama pencarian (dipanggil dari SearchView)
+  Future<void> searchNews(String query) async {
+    // Implementasi Debounce (opsional tapi direkomendasikan untuk live search)
+    // Untuk menghindari API call terlalu banyak
+    await 300.milliseconds.delay(); 
 
-  // ... (Sisa fungsi fetchTopHeadlines, refreshNews, selectCategory, searchNews tidak berubah)
+    if (query.isEmpty) {
+      clearSearch();
+      return;
+    }
+
+    try {
+      _isLoading.value = true;
+      _error.value = '';
+
+      // API call service di sini
+      // ASUMSI: _newsService.searchNews(query: query) sudah ada
+      final response = await _newsService.searchNews(query: query); 
+      _articles.value = response.articles;
+
+    } catch (e) {
+      _error.value = e.toString();
+      // Tidak perlu snackbar di sini, error akan ditampilkan di SearchView
+    } finally {
+      _isLoading.value = false;
+    }
+  }
+
+  // Fungsi untuk membersihkan hasil pencarian
+  void clearSearch() {
+    _articles.clear();
+    _error.value = '';
+    _isLoading.value = false;
+  }
+
+  // --- FUNGSI LAMA ---
+
   Future<void> fetchTopHeadlines({String? category}) async {
     try {
       _isLoading.value = true;
@@ -80,27 +120,6 @@ class NewsController extends GetxController {
     if (_selectedCategory.value != category) {
       _selectedCategory.value = category;
       fetchTopHeadlines(category: category);
-    }
-  }
-
-  Future<void> searchNews(String query) async {
-    if (query.isEmpty) return;
-
-    try {
-      _isLoading.value = true;
-      _error.value = '';
-
-      final response = await _newsService.searchNews(query: query);
-      _articles.value = response.articles;
-    } catch (e) {
-      _error.value = e.toString();
-      Get.snackbar(
-        'Error',
-        'Failed to search news: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    } finally {
-      _isLoading.value = false;
     }
   }
 }

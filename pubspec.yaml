@@ -41,6 +41,7 @@ dependencies:
   cached_network_image: ^3.4.1
   timeago: ^3.7.1
   flutter_dotenv: ^5.2.1
+  image_picker: ^1.2.0
 
     
 
