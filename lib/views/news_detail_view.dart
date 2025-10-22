@@ -38,7 +38,7 @@ class NewsDetailView extends StatelessWidget {
                       ),
                       errorWidget: (context, url, error) => Container(
                         color: AppColors.surfaceVariant,
-                        child: Icon(
+                        child: const Icon(
                           Icons.image_not_supported,
                           size: 50,
                           color: AppColors.onSurfaceVariant,
@@ -47,7 +47,7 @@ class NewsDetailView extends StatelessWidget {
                     )
                   : Container(
                       color: AppColors.surfaceVariant,
-                      child: Icon(
+                      child: const Icon(
                         Icons.newspaper,
                         size: 50,
                         color: AppColors.onSurfaceVariant,
@@ -56,7 +56,7 @@ class NewsDetailView extends StatelessWidget {
             ),
             actions: [
               IconButton(
-                icon: Icon(Icons.share),
+                icon: const Icon(Icons.share),
                 onPressed: () => _shareArticle(),
               ),
               PopupMenuButton<String>(
@@ -75,9 +75,9 @@ class NewsDetailView extends StatelessWidget {
                     value: 'copy_link',
                     child: Row(
                       children: [
-                        Icon(Icons.copy, color: AppColors.onSurfaceVariant),
-                        SizedBox(width: 8),
-                        Text('Copy Link'),
+                        const Icon(Icons.copy, color: AppColors.onSurfaceVariant),
+                        const SizedBox(width: 8),
+                        const Text('Copy Link'),
                       ],
                     ),
                   ),
@@ -85,10 +85,10 @@ class NewsDetailView extends StatelessWidget {
                     value: 'open_browser',
                     child: Row(
                       children: [
-                        Icon(Icons.open_in_browser,
+                        const Icon(Icons.open_in_browser,
                             color: AppColors.onSurfaceVariant),
-                        SizedBox(width: 8),
-                        Text('Open in Browser'),
+                        const SizedBox(width: 8),
+                        const Text('Open in Browser'),
                       ],
                     ),
                   ),
@@ -96,9 +96,11 @@ class NewsDetailView extends StatelessWidget {
               ),
             ],
           ),
+          
+          // --- KONTEN UTAMA ARTIKEL ---
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -107,7 +109,7 @@ class NewsDetailView extends StatelessWidget {
                     children: [
                       if (article.source?.name != null) ...[
                         Container(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 6,
                           ),
@@ -117,19 +119,19 @@ class NewsDetailView extends StatelessWidget {
                           ),
                           child: Text(
                             article.source!.name!,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppColors.onPrimaryContainer,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 12),
                       ],
                       if (article.publishedAt != null) ...[
                         Text(
                           timeago.format(DateTime.parse(article.publishedAt!)),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.onSurfaceVariant,
                             fontSize: 12,
                           ),
@@ -137,38 +139,38 @@ class NewsDetailView extends StatelessWidget {
                       ],
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   // Title
                   if (article.title != null) ...[
                     Text(
                       article.title!,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: AppColors.onSurface,
                         height: 1.3,
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                   ],
 
                   // Description
                   if (article.description != null) ...[
                     Text(
                       article.description!,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         color: AppColors.onSurfaceVariant,
                         height: 1.5,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
 
                   // Content
                   if (article.content != null) ...[
-                    Text(
+                    const Text(
                       'Content',
                       style: TextStyle(
                         fontSize: 18,
@@ -176,32 +178,32 @@ class NewsDetailView extends StatelessWidget {
                         color: AppColors.onSurface,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       // Membersihkan "[+... chars]" yang sering ada di API
                       article.content!.split(RegExp(r'\[\+\d+\s*chars\]')).first,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         color: AppColors.onSurface,
                         height: 1.6,
                       ),
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                   ],
 
-                  // Read More Button DENGAN GRADIENT
+                  // Read More Button
                   if (article.url != null) ...[
                     Container(
                       width: double.infinity,
-                      height: 55, // Tinggi yang jelas
+                      height: 55,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
-                        gradient: AppColors.primaryGradient, // <-- PENTING: Gradient
+                        gradient: AppColors.primaryGradient,
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.primary.withOpacity(0.4),
                             blurRadius: 10,
-                            offset: Offset(0, 5),
+                            offset: const Offset(0, 5),
                           )
                         ],
                       ),
@@ -210,31 +212,187 @@ class NewsDetailView extends StatelessWidget {
                         child: InkWell(
                           onTap: _openInBrowser,
                           borderRadius: BorderRadius.circular(16),
-                          child: Center(
+                          child: const Center(
                             child: Text(
                               'READ FULL ARTICLE',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.onPrimary, // Warna teks putih
+                                color: AppColors.onPrimary,
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 32),
                   ],
-
-                  SizedBox(height: 32),
                 ],
               ),
             ),
+          ),
+          
+          // --- BAR AKSI (Like, Save) ---
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: _buildActionButtons(),
+            ),
+          ),
+
+          // --- KOLOM KOMENTAR ---
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: _buildCommentSection(),
+            ),
+          ),
+        ],
+      ),
+      
+      // Tombol Tulis Komentar Tetap di Bawah
+      bottomNavigationBar: _buildCommentInputBar(context),
+    );
+  }
+
+  // --- WIDGETS INTERAKSI ---
+
+  Widget _buildActionButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        // Tombol Like
+        TextButton.icon(
+          onPressed: () => Get.snackbar('Action', 'Article Liked!'),
+          icon: const Icon(Icons.thumb_up_alt_outlined, color: AppColors.primary),
+          label: Text('1.2K', style: TextStyle(color: AppColors.onSurfaceVariant)),
+        ),
+        // Tombol Komentar
+        TextButton.icon(
+          onPressed: () => Get.snackbar('Action', 'Showing Comments...'),
+          icon: const Icon(Icons.comment_outlined, color: AppColors.primary),
+          label: Text('450', style: TextStyle(color: AppColors.onSurfaceVariant)),
+        ),
+        // Tombol Save
+        TextButton.icon(
+          onPressed: () => Get.snackbar('Action', 'Article Saved!'),
+          icon: const Icon(Icons.bookmark_border, color: AppColors.primary),
+          label: Text('Save', style: TextStyle(color: AppColors.onSurfaceVariant)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCommentSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Comments (450)',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.onSurface,
+          ),
+        ),
+        const SizedBox(height: 12),
+        
+        // Contoh Komentar 1
+        _buildCommentItem('Alan', 'Great insight! I totally agree with the author\'s point of view.', '5m ago'),
+        const SizedBox(height: 8),
+        
+        // Contoh Komentar 2
+        _buildCommentItem('JaneDoe', 'Need more details on the regional impact.', '1h ago'),
+        const SizedBox(height: 8),
+        
+        // Tombol Lihat Lebih Banyak
+        TextButton(
+          onPressed: () => Get.snackbar('Action', 'Loading more comments...'),
+          child: const Text('View All Comments', style: TextStyle(color: AppColors.primary)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCommentItem(String user, String text, String time) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                user,
+                style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.onSurface),
+              ),
+              Text(
+                time,
+                style: TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            text,
+            style: const TextStyle(color: AppColors.onSurface),
           ),
         ],
       ),
     );
   }
+  
+  Widget _buildCommentInputBar(BuildContext context) {
+    final TextEditingController commentController = TextEditingController();
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          boxShadow: [
+            BoxShadow(color: AppColors.cardShadow.withOpacity(0.1), blurRadius: 8),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: commentController,
+                decoration: InputDecoration(
+                  hintText: 'Add a comment...',
+                  hintStyle: TextStyle(color: AppColors.onSurfaceVariant),
+                  filled: true,
+                  fillColor: AppColors.surfaceVariant,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.send, color: AppColors.primary),
+              onPressed: () {
+                if (commentController.text.isNotEmpty) {
+                  Get.snackbar('Comment Sent', 'Your comment: "${commentController.text}"', snackPosition: SnackPosition.BOTTOM);
+                  commentController.clear();
+                  FocusScope.of(context).unfocus(); // Sembunyikan keyboard
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  // --- FUNGSI UTILITY LAMA (Share, Copy, Open Browser) ---
 
   void _shareArticle() {
     if (article.url != null) {
@@ -255,8 +413,8 @@ class NewsDetailView extends StatelessWidget {
         backgroundColor: AppColors.onSurface.withOpacity(0.9),
         colorText: AppColors.surface,
         borderRadius: 8,
-        margin: EdgeInsets.all(16),
-        duration: Duration(seconds: 2),
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 2),
       );
     }
   }
@@ -274,7 +432,7 @@ class NewsDetailView extends StatelessWidget {
           backgroundColor: AppColors.error,
           colorText: AppColors.onError,
           borderRadius: 8,
-          margin: EdgeInsets.all(16),
+          margin: const EdgeInsets.all(16),
         );
       }
     }
