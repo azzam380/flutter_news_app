@@ -1,9 +1,8 @@
-// lib/controllers/news_controller.dart
-
 import 'package:get/get.dart';
 import 'package:news_app/models/news_article.dart';
 import 'package:news_app/services/news_service.dart';
 import 'package:news_app/utils/constants.dart';
+import 'package:news_app/routes/app_pages.dart'; 
 
 class NewsController extends GetxController {
   final NewsService _newsService = NewsService();
@@ -15,7 +14,7 @@ class NewsController extends GetxController {
   bool get isLoggedIn => _isLoggedIn.value;
   String get username => _username.value;
 
-  // --- METHODS OTENTIKASI BARU ---
+  // --- METHODS OTENTIKASI ---
   void loginUser(String user) {
     _username.value = user;
     _isLoggedIn.value = true;
@@ -25,6 +24,7 @@ class NewsController extends GetxController {
     _username.value = 'Guest';
     _isLoggedIn.value = false;
     Get.snackbar('Success', 'Logout successful!', snackPosition: SnackPosition.BOTTOM);
+    Get.offAllNamed(Routes.HOME); 
   }
 
   void updateUsername(String newUsername) {
@@ -32,11 +32,14 @@ class NewsController extends GetxController {
     Get.snackbar('Success', 'Username updated successfully!', snackPosition: SnackPosition.BOTTOM);
   }
 
-  // --- VARIABLES NEWS LAMA ---
+  // --- VARIABLES NEWS ---
   final _isLoading = false.obs;
   final _articles = <NewsArticle>[].obs;
   final _selectedCategory = 'general'.obs;
   final _error = ''.obs;
+  
+  // --- VARIABEL BARU UNTUK DISPLAY LIMIT (paging) ---
+  final _displayLimit = 5.obs; // Mulai dengan 5 kartu
 
   // Getters News
   bool get isLoading => _isLoading.value;
@@ -45,18 +48,39 @@ class NewsController extends GetxController {
   String get error => _error.value;
   List<String> get categories => Constants.categories;
 
+  // Getter untuk batas tampilan
+  int get displayLimit => _displayLimit.value;
+  
+  // Getter untuk mengecek apakah masih ada kartu yang tersembunyi
+  bool get hasMoreArticles {
+    if (_articles.isEmpty) return false;
+    return _displayLimit.value < _articles.length;
+  }
+
   @override
   void onInit() {
     super.onInit();
     fetchTopHeadlines();
   }
   
-  // --- FUNGSI PENCARIAN BARU ---
+  // --- FUNGSI PAGING BARU ---
   
-  // Fungsi utama pencarian (dipanggil dari SearchView)
+  void _resetLimit() {
+    _displayLimit.value = 5;
+  }
+
+  void loadMoreArticles() {
+    int newLimit = _displayLimit.value + 5;
+    if (newLimit < _articles.length) {
+      _displayLimit.value = newLimit;
+    } else {
+      _displayLimit.value = _articles.length; 
+    }
+  }
+
+  // --- FUNGSI PENCARIAN (MODIFIED) ---
+  
   Future<void> searchNews(String query) async {
-    // Implementasi Debounce (opsional tapi direkomendasikan untuk live search)
-    // Untuk menghindari API call terlalu banyak
     await 300.milliseconds.delay(); 
 
     if (query.isEmpty) {
@@ -67,33 +91,33 @@ class NewsController extends GetxController {
     try {
       _isLoading.value = true;
       _error.value = '';
+      _resetLimit(); 
 
-      // API call service di sini
-      // ASUMSI: _newsService.searchNews(query: query) sudah ada
       final response = await _newsService.searchNews(query: query); 
       _articles.value = response.articles;
 
     } catch (e) {
       _error.value = e.toString();
-      // Tidak perlu snackbar di sini, error akan ditampilkan di SearchView
     } finally {
       _isLoading.value = false;
     }
   }
 
-  // Fungsi untuk membersihkan hasil pencarian
+  // Fungsi untuk membersihkan hasil pencarian (MODIFIED)
   void clearSearch() {
     _articles.clear();
     _error.value = '';
     _isLoading.value = false;
+    _resetLimit(); 
   }
 
-  // --- FUNGSI LAMA ---
+  // --- FUNGSI UTAMA (MODIFIED) ---
 
   Future<void> fetchTopHeadlines({String? category}) async {
     try {
       _isLoading.value = true;
       _error.value = '';
+      _resetLimit(); 
 
       final response = await _newsService.getTopHeadlines(
         category: category ?? _selectedCategory.value,

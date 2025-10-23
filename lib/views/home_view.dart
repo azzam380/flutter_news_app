@@ -8,12 +8,11 @@ import 'package:news_app/widgets/category_chip.dart';
 import 'package:news_app/widgets/loading_shimmer.dart';
 
 class HomeView extends GetView<NewsController> {
-  // GlobalKey digunakan untuk mengakses Drawer State
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   
   @override
   Widget build(BuildContext context) {
-    // KOREKSI UTAMA: Panggil fetch saat build jika data kosong (untuk mengatasi error kembali dari halaman lain)
+    // Memastikan fetch dipanggil saat kembali ke Home jika list kosong
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (controller.articles.isEmpty && !controller.isLoading && controller.error.isEmpty) {
         controller.fetchTopHeadlines();
@@ -49,18 +48,42 @@ class HomeView extends GetView<NewsController> {
                 }
 
                 if (controller.articles.isEmpty) {
-                  // Jika articles kosong, kita sudah memicu fetch di atas.
-                  // Tampilkan pesan kosong.
-                  return _buildEmptyWidget(context); 
+                  return _buildEmptyWidget(context); // Melewatkan context
                 }
+                
+                // Hitung jumlah item yang akan ditampilkan (min(total, limit))
+                final displayCount = controller.articles.length > controller.displayLimit
+                    ? controller.displayLimit
+                    : controller.articles.length;
 
                 return RefreshIndicator(
                   onRefresh: controller.refreshNews,
                   color: AppColors.primary,
                   child: ListView.builder(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    itemCount: controller.articles.length,
+                    // ItemCount: jumlah yang ditampilkan + 1 jika masih ada Load More
+                    itemCount: displayCount + (controller.hasMoreArticles ? 1 : 0), 
                     itemBuilder: (context, index) {
+                      
+                      // LOGIKA LOAD MORE
+                      if (index == displayCount && controller.hasMoreArticles) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20.0),
+                          child: Center(
+                            child: ElevatedButton.icon(
+                              icon: const Icon(Icons.arrow_downward),
+                              label: const Text('Load More Articles'),
+                              onPressed: controller.loadMoreArticles,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      
+                      // Tampilkan News Card
                       final article = controller.articles[index];
                       return NewsCard(
                         article: article,

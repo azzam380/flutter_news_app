@@ -26,7 +26,7 @@ class AppColors {
 
   static const Color secondary = Color(0xFF64B5F6);
   static const Color onSecondary = Colors.white;
-  static const Color secondaryContainer = Color(0xFFE3F2FD);
+  static const Color secondaryContainer = Color(0xFFE3F2FD); // Lightest Blue
   static const Color onSecondaryContainer = Color(0xFF1976D2);
 
   // Surface and Background - Fokus pada Putih Cerah
