@@ -31,7 +31,7 @@ class NewsDetailView extends StatelessWidget {
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Container(
                         color: AppColors.surfaceVariant,
-                        child: Center(
+                        child: const Center(
                             child: CircularProgressIndicator(
                           color: AppColors.primary,
                         )),
@@ -262,19 +262,19 @@ class NewsDetailView extends StatelessWidget {
       children: [
         // Tombol Like
         TextButton.icon(
-          onPressed: () => Get.snackbar('Action', 'Article Liked!'),
+          onPressed: () => Get.snackbar('Action', 'Article Liked!', snackPosition: SnackPosition.BOTTOM),
           icon: const Icon(Icons.thumb_up_alt_outlined, color: AppColors.primary),
           label: Text('1.2K', style: TextStyle(color: AppColors.onSurfaceVariant)),
         ),
         // Tombol Komentar
         TextButton.icon(
-          onPressed: () => Get.snackbar('Action', 'Showing Comments...'),
+          onPressed: () => Get.snackbar('Action', 'Showing Comments...', snackPosition: SnackPosition.BOTTOM),
           icon: const Icon(Icons.comment_outlined, color: AppColors.primary),
           label: Text('450', style: TextStyle(color: AppColors.onSurfaceVariant)),
         ),
         // Tombol Save
         TextButton.icon(
-          onPressed: () => Get.snackbar('Action', 'Article Saved!'),
+          onPressed: () => Get.snackbar('Action', 'Article Saved!', snackPosition: SnackPosition.BOTTOM),
           icon: const Icon(Icons.bookmark_border, color: AppColors.primary),
           label: Text('Save', style: TextStyle(color: AppColors.onSurfaceVariant)),
         ),
@@ -306,7 +306,7 @@ class NewsDetailView extends StatelessWidget {
         
         // Tombol Lihat Lebih Banyak
         TextButton(
-          onPressed: () => Get.snackbar('Action', 'Loading more comments...'),
+          onPressed: () => Get.snackbar('Action', 'Loading more comments...', snackPosition: SnackPosition.BOTTOM),
           child: const Text('View All Comments', style: TextStyle(color: AppColors.primary)),
         ),
       ],
